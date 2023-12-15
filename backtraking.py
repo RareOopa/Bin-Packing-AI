@@ -1,58 +1,58 @@
-class BinPackingSolver:
-    def __init__(self, bin_capacity):
-        self.bin_capacity = bin_capacity
-        self.best_solution = None
+def bin_packing_backtracking(item_sizes, bin_capacity, num_bins):
+    def backtracking_util(current_bin, remaining_items):
+        nonlocal best_solution, best_num_bins
 
-    def pack_items(self, items):
-        self.best_solution = None
-        self.backtrack([], items)
-        return self.best_solution
-
-    def backtrack(self, current_solution, remaining_items):
         if not remaining_items:
-            if self.is_feasible(current_solution):
-                self.update_best_solution(current_solution)
+            # All items have been packed
+            if current_bin < best_num_bins:
+                best_num_bins = current_bin
+                best_solution = bin_assignment.copy()
             return
 
-        current_item = remaining_items[0]
+        for bin_index in range(num_bins):
+            if bin_capacity[bin_index] >= remaining_items[0][1]:  # Check item size instead of item value
+                # Try placing the item in the current bin
+                bin_capacity[bin_index] -= remaining_items[0][1]
+                bin_assignment[remaining_items[0][0]] = (bin_index, remaining_items[0][1])
 
-        # Try placing the current item in each bin
-        for i, bin_items in enumerate(current_solution):
-            new_solution = current_solution[:]
-            new_solution[i] = bin_items + [current_item]
-            self.backtrack(new_solution, remaining_items[1:])
+                backtracking_util(current_bin, remaining_items[1:])
 
-        # Try placing the current item in a new bin
-        new_solution = current_solution + [[current_item]]
-        self.backtrack(new_solution, remaining_items[1:])
+                # Backtrack
+                bin_capacity[bin_index] += remaining_items[0][1]
+                bin_assignment.pop(remaining_items[0][0], None)  # Use pop to avoid KeyError
 
-    def is_feasible(self, solution):
-        for bin_items in solution:
-            if sum(bin_items) > self.bin_capacity:
-                return False
-        return True
+    # Initialization
+    best_solution = {}
+    best_num_bins = float('inf')
+    bin_assignment = {}
 
-    def update_best_solution(self, solution):
-        if self.best_solution is None or len(solution) < len(self.best_solution):
-            self.best_solution = solution
+    items_with_sizes = list(enumerate(item_sizes, 1))  # Enumerate items with their sizes
 
+    backtracking_util(0, items_with_sizes)
 
-# Example usage with user input:
-num_items = int(input("Enter the number of items: "))
-items = [int(input(f"Enter the size of item {i + 1}: ")) for i in range(num_items)]
+    # Return the actual number of bins used and the items in each bin
+    return best_solution, len(set(location for location, size in best_solution.values()))
 
-bin_capacity = int(input("Enter the capacity of each bin: "))
+# Input from the user
+item_sizes_input = input("Enter the item sizes separated by spaces: ")
+item_sizes = list(map(int, item_sizes_input.split()))
 
-solver = BinPackingSolver(bin_capacity)
-solution = solver.pack_items(items)
+bin_capacity_value = int(input("Enter the bin capacity for all bins: "))
+num_bins = int(input("Enter the number of bins: "))
 
-if solution:
-    used_bins = len(solution)
+# Create a list of bin capacities with the same value for all bins
+bin_capacity = [bin_capacity_value] * num_bins
 
-    print(f"Used bins: {used_bins}")
+solution, num_used_bins = bin_packing_backtracking(item_sizes, bin_capacity, num_bins)
 
-    # Print the items in each bin
-    for i, bin_items in enumerate(solution):
-        print(f"Bin {i + 1}:", bin_items)
+# Print used bins and their items
+print("Used Bins:")
+for bin_index in range(num_used_bins):
+    bin_items = [size for item, (location, size) in solution.items() if location == bin_index]
+    print(f"Bin {bin_index}: {bin_items}")
+
+# Print the number of used bins
+if num_used_bins <= 0:
+    print("You can't fit it all!")
 else:
-    print("No available solutions.")
+    print("Number of Bins Used:", num_used_bins)
