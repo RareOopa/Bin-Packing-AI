@@ -1,4 +1,6 @@
 import pygame
+
+
 class InputBox:
     def __init__(self, x, y, width, height, font):
         self.rect = pygame.Rect(x, y, width, height)

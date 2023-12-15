@@ -32,27 +32,3 @@ def bin_packing_backtracking(item_sizes, bin_capacity, num_bins):
 
     # Return the actual number of bins used and the items in each bin
     return best_solution, len(set(location for location, size in best_solution.values()))
-
-# Input from the user
-item_sizes_input = input("Enter the item sizes separated by spaces: ")
-item_sizes = list(map(int, item_sizes_input.split()))
-
-bin_capacity_value = int(input("Enter the bin capacity for all bins: "))
-num_bins = int(input("Enter the number of bins: "))
-
-# Create a list of bin capacities with the same value for all bins
-bin_capacity = [bin_capacity_value] * num_bins
-
-solution, num_used_bins = bin_packing_backtracking(item_sizes, bin_capacity, num_bins)
-
-# Print used bins and their items
-print("Used Bins:")
-for bin_index in range(num_used_bins):
-    bin_items = [size for item, (location, size) in solution.items() if location == bin_index]
-    print(f"Bin {bin_index}: {bin_items}")
-
-# Print the number of used bins
-if num_used_bins <= 0:
-    print("You can't fit it all!")
-else:
-    print("Number of Bins Used:", num_used_bins)

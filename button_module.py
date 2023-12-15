@@ -1,5 +1,6 @@
 import pygame
 
+
 class Button:
     def __init__(self, x, y, width, height, color, text, font, callback):
         self.rect = pygame.Rect(x, y, width, height)
