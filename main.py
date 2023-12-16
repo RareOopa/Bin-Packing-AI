@@ -18,14 +18,11 @@ clock = pygame.time.Clock()
 
 inputBox_font = pygame.font.Font(None, 32)
 
+start_img = pygame.image.load('./assets/start_btn.png')
+solve_backtrack_img = pygame.image.load('./assets/solve_backtrack_btn.png')
+
 items = []
 item_y_pos = 50
-
-num_items_input = InputBox(50, 610, 140, 32, inputBox_font)
-num_bins_input = InputBox(250, 610, 140, 32, inputBox_font)
-bin_height_input = InputBox(450, 610, 140, 32, inputBox_font)
-size_items_input = InputBox(650, 610, 140, 32, inputBox_font)
-
 num_items, size_items = 0, []
 start_x = SCREEN_WIDTH // 2
 start_y = 30
@@ -33,12 +30,19 @@ bin_height = 0
 num_of_bins = 0
 bin_width = 20
 bin_margin = 10
+speed = 6
+reached_destination = False
+
+num_items_input = InputBox(50, 610, 140, 32, inputBox_font)
+num_bins_input = InputBox(250, 610, 140, 32, inputBox_font)
+bin_height_input = InputBox(450, 610, 140, 32, inputBox_font)
+size_items_input = InputBox(650, 610, 140, 32, inputBox_font)
 
 
 def create_items_and_bins():
     global num_items, size_items, start_x, start_y, bin_height, num_of_bins, bins
-    num_items = int(num_items_input.text)if num_items_input.text.isdigit() else 0
-    size_items = list(map(int, size_items_input.text.split()))if num_items_input.text.isdigit() else 0
+    num_items = int(num_items_input.text) if num_items_input.text.isdigit() else 0
+    size_items = list(map(int, size_items_input.text.split())) if num_items_input.text.isdigit() else []
     num_of_bins = int(num_bins_input.text) if num_bins_input.text.isdigit() else 0
     bin_height = int(bin_height_input.text) if bin_height_input.text.isdigit() else 0
 
@@ -47,6 +51,8 @@ def backtrack_solve():
     bin_capacity = [bin_height] * num_of_bins
 
     solution, num_used_bins = bin_packing_backtracking(size_items, bin_capacity, num_of_bins)
+
+    print(type(solution), list(bins), list(items))
 
     # Print used bins and their items
     print("Used Bins:")
@@ -70,11 +76,8 @@ def set_text(string, coordx, coordy, fontSize):  # Function to set text
     return text, textRect
 
 
-start_img = pygame.image.load('./assets/start_btn.png')
-solve_backtrack_button = pygame.image.load('./assets/solve_backtrack_btn.png')
-
 create_button = Button(50, 650, start_img, create_items_and_bins, 0.8)
-solve_backtrack_button = Button(650, 650, solve_backtrack_button, backtrack_solve, 0.8)
+solve_backtrack_button = Button(650, 650, solve_backtrack_img, backtrack_solve, 0.8)
 
 num_items_text = set_text("Number of Items", 100, 595, 20)
 num_of_bins_text = set_text("Number of Bins", 300, 595, 20)
@@ -113,9 +116,8 @@ while run:
         size_items_input.handle_event(event)
         num_bins_input.handle_event(event)
         bin_height_input.handle_event(event)
-        if len(size_items) > 0 and bin_height > 0 and num_of_bins > 0:
-            create_button.handle_event(event)
-            solve_backtrack_button.handle_event(event)
+        create_button.handle_event(event)
+        solve_backtrack_button.handle_event(event)
 
     items = []
     if 0 < num_items == len(size_items):
@@ -136,7 +138,7 @@ while run:
         a_bin.draw(screen)
 
     pygame.display.flip()
-    pygame.time.Clock().tick(30)
+    clock.tick(60)
 
 pygame.quit()
 sys.exit()

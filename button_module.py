@@ -9,7 +9,7 @@ class Button:
         self.width = image.get_width()
         self.height = image.get_height()
         self.image = pygame.transform.scale(image, (int(self.width * initial_scale), int(self.height * initial_scale)))
-        self.rect = image.get_rect()
+        self.rect = self.image.get_rect()
         self.rect.topleft = (x, y)
         self.callback = callback
         self.target_scale = initial_scale
