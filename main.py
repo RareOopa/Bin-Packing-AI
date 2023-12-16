@@ -13,6 +13,7 @@ SCREEN_WIDTH = 1530
 SCREEN_HEIGHT = 785
 
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+pygame.display.set_caption('Bin Packing AI', )
 clock = pygame.time.Clock()
 
 inputBox_font = pygame.font.Font(None, 32)
@@ -20,10 +21,10 @@ inputBox_font = pygame.font.Font(None, 32)
 items = []
 item_y_pos = 50
 
-num_items_input = InputBox(50, 685, 140, 32, inputBox_font)
-num_bins_input = InputBox(250, 685, 140, 32, inputBox_font)
-bin_height_input = InputBox(450, 685, 140, 32, inputBox_font)
-size_items_input = InputBox(650, 685, 140, 32, inputBox_font)
+num_items_input = InputBox(50, 610, 140, 32, inputBox_font)
+num_bins_input = InputBox(250, 610, 140, 32, inputBox_font)
+bin_height_input = InputBox(450, 610, 140, 32, inputBox_font)
+size_items_input = InputBox(650, 610, 140, 32, inputBox_font)
 
 num_items, size_items = 0, []
 start_x = SCREEN_WIDTH // 2
@@ -36,8 +37,8 @@ bin_margin = 10
 
 def create_items_and_bins():
     global num_items, size_items, start_x, start_y, bin_height, num_of_bins, bins
-    num_items = int(num_items_input.text)
-    size_items = list(map(int, size_items_input.text.split()))
+    num_items = int(num_items_input.text)if num_items_input.text.isdigit() else 0
+    size_items = list(map(int, size_items_input.text.split()))if num_items_input.text.isdigit() else 0
     num_of_bins = int(num_bins_input.text) if num_bins_input.text.isdigit() else 0
     bin_height = int(bin_height_input.text) if bin_height_input.text.isdigit() else 0
 
@@ -69,18 +70,21 @@ def set_text(string, coordx, coordy, fontSize):  # Function to set text
     return text, textRect
 
 
-create_button = Button(50, 725, 100, 32, (0, 255, 0), "Create", inputBox_font, create_items_and_bins)
-solve_backtrack_button = Button(250, 725, 250, 32, (0, 255, 0), "Solve using backtrack", inputBox_font, backtrack_solve)
+start_img = pygame.image.load('./assets/start_btn.png')
+solve_backtrack_button = pygame.image.load('./assets/solve_backtrack_btn.png')
 
-num_items_text = set_text("Number of Items", 100, 670, 20)
-num_of_bins_text = set_text("Number of Bins", 300, 670, 20)
-bin_height_text = set_text("Bins Capacity", 500, 670, 20)
-size_items_text = set_text("Size of Items", 700, 670, 20)
+create_button = Button(50, 650, start_img, create_items_and_bins, 0.8)
+solve_backtrack_button = Button(650, 650, solve_backtrack_button, backtrack_solve, 0.8)
+
+num_items_text = set_text("Number of Items", 100, 595, 20)
+num_of_bins_text = set_text("Number of Bins", 300, 595, 20)
+bin_height_text = set_text("Bins Capacity", 500, 595, 20)
+size_items_text = set_text("Size of Items", 700, 595, 20)
 
 run = True
 
 while run:
-    screen.fill((255, 255, 255, 255))
+    screen.fill((202, 228, 241))
 
     num_items_input.update()
     num_items_input.draw(screen)
@@ -109,8 +113,9 @@ while run:
         size_items_input.handle_event(event)
         num_bins_input.handle_event(event)
         bin_height_input.handle_event(event)
-        create_button.handle_event(event)
-        solve_backtrack_button.handle_event(event)
+        if len(size_items) > 0 and bin_height > 0 and num_of_bins > 0:
+            create_button.handle_event(event)
+            solve_backtrack_button.handle_event(event)
 
     items = []
     if 0 < num_items == len(size_items):

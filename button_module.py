@@ -1,18 +1,40 @@
+# button_module.py
+
 import pygame
+import math
 
 
 class Button:
-    def __init__(self, x, y, width, height, color, text, font, callback):
-        self.rect = pygame.Rect(x, y, width, height)
-        self.color = color
-        self.text = text
-        self.font = font
+    def __init__(self, x, y, image, callback, initial_scale):
+        self.width = image.get_width()
+        self.height = image.get_height()
+        self.image = pygame.transform.scale(image, (int(self.width * initial_scale), int(self.height * initial_scale)))
+        self.rect = image.get_rect()
+        self.rect.topleft = (x, y)
         self.callback = callback
+        self.target_scale = initial_scale
+        self.current_scale = initial_scale
+
+    def ease_in_out(self, t):
+        return 0.5 * (1 - math.cos(math.pi * t))
 
     def draw(self, screen):
-        pygame.draw.rect(screen, self.color, self.rect)
-        text_surface = self.font.render(self.text, True, (0, 0, 0))
-        screen.blit(text_surface, (self.rect.x + (self.rect.width - text_surface.get_width()) // 2, self.rect.y + 5))
+        pos = pygame.mouse.get_pos()
+        hovered = self.rect.collidepoint(pos)
+
+        if hovered:
+            self.target_scale = 0.9
+        else:
+            self.target_scale = 0.8
+
+        # Ease in and out
+        easing_speed = 0.5  # Adjust the speed of the easing
+        self.current_scale += (self.target_scale - self.current_scale) * easing_speed
+
+        scaled_image = pygame.transform.scale(self.image,
+                                              (int(self.width * self.current_scale),
+                                               int(self.height * self.current_scale)))
+        screen.blit(scaled_image, (self.rect.x, self.rect.y))
 
     def handle_event(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
