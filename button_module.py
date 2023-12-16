@@ -27,8 +27,7 @@ class Button:
         else:
             self.target_scale = 0.8
 
-        # Ease in and out
-        easing_speed = 0.5  # Adjust the speed of the easing
+        easing_speed = 0.5
         self.current_scale += (self.target_scale - self.current_scale) * easing_speed
 
         scaled_image = pygame.transform.scale(self.image,
