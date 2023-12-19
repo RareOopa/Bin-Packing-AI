@@ -1,71 +1,54 @@
 import pygame
-from bin_module import Bin
-import math
+import sys
 
+# Initialize Pygame
 pygame.init()
 
-SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 600
+# Set up display
+width, height = 800, 600
+screen = pygame.display.set_mode((width, height))
+pygame.display.set_caption("Move Rectangle")
 
-screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-pygame.display.set_caption('Bin Packing AI')
-clock = pygame.time.Clock()
+# Set up colors
+white = (255, 255, 255)
+red = (255, 0, 0)
 
-horz_rect = pygame.Rect(100, 200, 100, 30)
-horz_rect2 = pygame.Rect(500, 300, 30, 100)
-print (horz_rect.x, horz_rect.y)
-target_x = 500
-target_y = 300
-speed = 6
-num_of_bins = 10
-bin_width = horz_rect.width
-bin_margin = 5
-bin_height = horz_rect.height * 2
-start_x = SCREEN_WIDTH // 2
-reached_destination = False
+# Set up the rectangle
+rect_width, rect_height = 50, 50
+rect_x, rect_y = 50, 50
 
+# Function to move the rectangle to a target destination
+def move_to_destination(target_x, target_y):
+    global rect_x, rect_y
+    rect_x, rect_y = target_x, target_y
 
-def move_item(item, target_x, target_y):
-    global reached_destination
-    if item.x < target_x:
-        item.x += speed
-        if item.x > target_x:
-            item.x = target_x
-    elif item.x > target_x:
-        item.x -= speed
-        if item.x < target_x:
-            item.x = target_x
+# Set the target destination for the rectangle
+target_destination = (300, 300)
 
-    if item.x == target_x:
-        if item.y < target_y:
-            item.y += speed
-            if item.y > target_y:
-                item.y = target_y
-        elif item.y > target_y:
-            item.y -= speed
-            if item.y < target_y:
-                item.y = target_y
-
-    if item.x == target_x and not reached_destination:
-        item.width, item.height = item.height, item.width
-        reached_destination = True
-
-    pygame.draw.rect(screen, (255, 0, 255), item)
+# Draw the initial rectangle
 
 
-run = True
+# Add a delay before moving to the destination
+pygame.time.delay(2000)  # Delay in milliseconds (2 seconds)
 
-while run:
-    screen.fill((202, 228, 241))
+# Move the rectangle to the target destination
+move_to_destination(*target_destination)
 
-    move_item(horz_rect, 500, 300)
-    pygame.draw.rect(screen, (0, 0, 0), horz_rect2, 2)
-
+# Main game loop
+running = True
+while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            run = False
+            running = False
 
+    # Clear the screen
+    screen.fill(white)
+
+    # Draw the rectangle at its final destination
+    pygame.draw.rect(screen, red, (rect_x, rect_y, rect_width, rect_height))
+
+    # Update the display
     pygame.display.flip()
-    clock.tick(60)
 
+# Quit Pygame
 pygame.quit()
