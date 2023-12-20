@@ -12,27 +12,32 @@ reached_destination = False
 run = True
 clock = pygame.time.Clock()  # Correct initialization of clock
 
-items = [Item(0, 50, 50, 4, 50), Item(1, 50, 100, 4, 100), Item(2, 50, 150, 4, 30), Item(3, 50,200, 4, 20)]
+items = [Item(0, 50, 50, 4, 50), Item(1, 50, 100, 4, 100), Item(2, 50, 150, 4, 30), Item(3, 50, 200, 4, 20)]
 bins = [Bin(400, 50, 22, 100, (0, 0, 0), 0), Bin(450, 50, 22, 100, (0, 0, 0), 1)]
 original_positions = {item.index: (item.x, item.y, item.width, item.height) for item in items}
 all_solutions = []  # Initialize all_solutions as a global variable
 
-def move_item(item, target_x, target_y):
+
+def move_item(item, target_x, target_y, bin_height):
     if not item.reached_destination:
         if item.x < target_x:
             item.x += speed
             if item.x > target_x:
                 item.x = target_x
-                item.y = target_y + item.width
-                print(f"item.y{item.y},item.width{item.width}: target_y{target_y}")
-                pygame.time.delay(200)
+                print(f"{item.width}, \n {target_x}, \n {target_y}")
+                if item.width == bin_height:
+                    pass
+                else:
+                    item.y = target_y + item.size + 10
         elif item.x > target_x:
             item.x -= speed
             if item.x < target_x:
                 item.x = target_x
-                item.y = target_y + item.width
-                print(f"item.y{item.y},item.width{item.width}: target_y{target_y}")
-                pygame.time.delay(200)
+                print(f"{item.width}, \n {target_x}, \n {target_y}")
+                if item.width == bin_height:
+                    pass
+                else:
+                    item.y = target_y + item.size + 10
         if item.y > target_y:
             item.y -= speed
             if item.y < target_y:
@@ -57,6 +62,7 @@ def move_item(item, target_x, target_y):
 
 def reset_item(item, original_position):
     item.x, item.y, item.width, item.height = original_position
+
 
 def bin_packing_backtracking(items, bins):
     def backtracking_util(current_bin, remaining_items, bin_assignment, all_solutions):
@@ -90,10 +96,13 @@ def bin_packing_backtracking(items, bins):
     # Return the actual number of bins used, the items in each bin, and all solutions
     return best_solution, len(set(location for location, size in best_solution.values())), all_solutions
 
+
 def backtrack_solve():
     global reached_destination
     reached_destination = False  # Reset global flag
     solution, num_used_bins, _ = bin_packing_backtracking(items, bins)
+    print(all_solutions)
+    print(type(all_solutions))
     # Print used bins and their items
     print("\nUsed Bins:")
     for bin_index in range(num_used_bins):
@@ -115,7 +124,7 @@ def backtrack_solve():
 
                 # Move item to its destination
                 print(f"bin pos{bin.x}: {bin.y}")
-                while not move_item(item, bin.x, bin.y):
+                while not move_item(item, bin.x, bin.y, bin.height):
                     screen.fill((255, 255, 255))
                     solve_backtrack_button.draw(screen)
 

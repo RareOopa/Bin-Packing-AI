@@ -1,5 +1,3 @@
-# button_module.py
-
 import pygame
 import math
 

@@ -29,6 +29,7 @@ class Item:
         self.y = item_y_pos
         self.height = 20
         self.width = size
+        self.size = size
         self.item_color = self.color
         self.reached_destination = False
         self.reset_requested = False
